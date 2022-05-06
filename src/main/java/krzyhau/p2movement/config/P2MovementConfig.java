@@ -20,7 +20,10 @@ public class P2MovementConfig implements ConfigData {
     public double SPEED_CAP = 3600;
     public double FRICTION = 4;
     public double ACCELERATE = 10;
-    public double AIRACCELERATE = 5;
+    public double AIRACCELERATE = 10;
+
+    public boolean velMeter = false;
+    public boolean prevent_duck_jump = false;
 
     public static void register() {
         AutoConfig.register(P2MovementConfig.class, GsonConfigSerializer::new);

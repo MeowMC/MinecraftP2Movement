@@ -1,5 +1,7 @@
-package krzyhau.p2movement;
+package krzyhau.p2movement.client.gui;
 
+import krzyhau.p2movement.ModMain;
+import krzyhau.p2movement.Portal2Movement;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;

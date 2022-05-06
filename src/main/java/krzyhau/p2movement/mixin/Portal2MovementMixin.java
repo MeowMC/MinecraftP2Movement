@@ -1,22 +1,40 @@
 package krzyhau.p2movement.mixin;
 
-import krzyhau.p2movement.ModMain;
+import com.google.common.collect.ImmutableMap;
 import krzyhau.p2movement.Portal2Movement;
 import krzyhau.p2movement.config.P2MovementConfig;
-import me.shedaniel.autoconfig.AutoConfig;
-import net.minecraft.entity.Flutterer;
-import net.minecraft.entity.MovementType;
+import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static net.minecraft.entity.player.PlayerEntity.STANDING_DIMENSIONS;
+
 @Mixin(PlayerEntity.class)
-public abstract class Portal2MovementMixin {
+public abstract class Portal2MovementMixin extends LivingEntity {
+
+    @Shadow
+    @Final
+    private static ImmutableMap<Object, Object> POSE_DIMENSIONS = ImmutableMap.builder()
+            .put(EntityPose.STANDING, STANDING_DIMENSIONS)
+            .put(EntityPose.SLEEPING, SLEEPING_DIMENSIONS)
+            .put(EntityPose.FALL_FLYING, EntityDimensions.changing(0.6f, 0.6f))
+            .put(EntityPose.SWIMMING, EntityDimensions.changing(0.6f, 0.6f))
+            .put(EntityPose.SPIN_ATTACK, EntityDimensions.changing(0.6f, 0.6f))
+            .put(EntityPose.CROUCHING, EntityDimensions.changing(0.6f, 0.9f))
+            .put(EntityPose.DYING, EntityDimensions.fixed(0.2f, 0.2f)).build();
+
+    protected Portal2MovementMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
 
     // override travel function to allow custom movement
     @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
@@ -24,14 +42,14 @@ public abstract class Portal2MovementMixin {
         PlayerEntity self = (PlayerEntity) (Object) this;
 
         if (Portal2Movement.shouldUseCustomMovement(self)) {
+            Portal2Movement p2Movement = new Portal2Movement();
 
-            Portal2Movement.config = P2MovementConfig.get();
-
-            Portal2Movement.applyMovementInput(self, movementInput);
+            p2Movement.config = P2MovementConfig.get();
 
             Vec3d oldPos = self.getPos();
 
-            self.move(MovementType.SELF, self.getVelocity());
+            p2Movement.applyMovementInput(self, movementInput);
+
 
             self.updateLimbs(self, self instanceof Flutterer);
 
@@ -47,7 +65,7 @@ public abstract class Portal2MovementMixin {
         PlayerEntity self = (PlayerEntity) (Object) this;
 
         if (Portal2Movement.shouldUseCustomMovement(self)) {
-            Portal2Movement.jump(self);
+            new Portal2Movement().jump(self);
             ci.cancel();
         }
     }

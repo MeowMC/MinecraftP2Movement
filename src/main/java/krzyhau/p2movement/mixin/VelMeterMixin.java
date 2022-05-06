@@ -1,6 +1,5 @@
 package krzyhau.p2movement.mixin;
 
-import krzyhau.p2movement.client.gui.ClShowposHud;
 import krzyhau.p2movement.client.gui.VelMeterHud;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,9 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(InGameHud.class)
-public class ClShowposMixin {
+public abstract class VelMeterMixin {
     @Inject(method = "render", at = @At("RETURN"))
     public void onRender(MatrixStack matrices, float tickDelta, CallbackInfo info) {
-        ClShowposHud.draw(matrices);
+        if (!VelMeterHud.noDraw)
+            VelMeterHud.draw(matrices);
     }
 }

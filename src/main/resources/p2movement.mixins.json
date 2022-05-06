@@ -4,10 +4,12 @@
   "package": "krzyhau.p2movement.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "EntityMixin",
     "Portal2MovementMixin"
   ],
   "client": [
-    "ClShowposMixin"
+    "ClShowposMixin",
+    "VelMeterMixin"
   ],
   "injectors": {
     "defaultRequire": 1
